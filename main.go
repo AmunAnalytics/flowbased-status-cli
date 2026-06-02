@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"log"
+	"main/buildinfo"
 	"main/statuspage"
 	"os"
 	"time"
@@ -91,6 +92,11 @@ func main() {
 	var err error
 
 	if len(os.Args) > 1 {
+		if os.Args[1] == "version" {
+			lipgloss.Println(HeaderStyle.Render(fmt.Sprintf("Version: \t\t %s", buildinfo.Version)))
+			lipgloss.Println(HeaderStyle.Render(fmt.Sprintf("Git Commit: \t %s", buildinfo.GitCommit)))
+			return
+		}
 		business_day = os.Args[1]
 	} else {
 		business_day, err = askDate()
