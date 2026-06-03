@@ -6,6 +6,7 @@ import (
 	"main/buildinfo"
 	"main/statuspage"
 	"os"
+	"strings"
 	"time"
 
 	"charm.land/huh/v2"
@@ -58,7 +59,11 @@ func askDate() (string, error) {
 }
 
 func printTable(table_data [][]string) {
-	termWidth, _, _ := term.GetSize(os.Stdout.Fd())
+	termWidth, _, err := term.GetSize(os.Stdout.Fd())
+	if err != nil || termWidth == 0 {
+		termWidth = 125
+	}
+
 	termWidth -= 5
 	firstWidth := termWidth * 15 / 100
 	columnWidth := (termWidth - firstWidth) / (len(table_data[0]) - 1)
@@ -80,6 +85,16 @@ func printTable(table_data [][]string) {
 					Width(firstWidth)
 			} else {
 				style = style.Width(columnWidth)
+				if len(table_data[row+1][col]) >= 3 {
+					cell_data := table_data[row+1][col]
+					if strings.HasPrefix(cell_data, "[✖]") {
+						style = style.Foreground(lipgloss.Color(Red))
+					} else if strings.HasPrefix(cell_data, "[!]") {
+						style = style.Foreground(lipgloss.Color(Yellow))
+					} else if strings.HasPrefix(cell_data, "[✔]") {
+						style = style.Foreground(lipgloss.Color(Green))
+					}
+				}
 			}
 
 			if row == len(table_data)-2 {
