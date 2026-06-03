@@ -67,10 +67,17 @@ func Register(cli_type string, version string) {
 		return
 	}
 
+	var url string
+	if version == "dev" {
+		url = "http://localhost:8080/telemetry/visit/%s/"
+	} else {
+		url = "https://ui.dl.amunanalytics.eu/telemetry/visit/%s/"
+	}
+
 	client := &http.Client{}
 	req, err := http.NewRequest(
 		"POST",
-		fmt.Sprintf("http://localhost:8080/telemetry/visit/%s/", cli_type),
+		fmt.Sprintf(url, cli_type),
 		bytes.NewBuffer(payload))
 	if err != nil {
 		return
