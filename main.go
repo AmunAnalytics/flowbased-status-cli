@@ -11,6 +11,7 @@ import (
 	"charm.land/huh/v2"
 	"charm.land/lipgloss/v2"
 	"charm.land/lipgloss/v2/table"
+	"github.com/charmbracelet/x/term"
 )
 
 var (
@@ -57,6 +58,11 @@ func askDate() (string, error) {
 }
 
 func printTable(table_data [][]string) {
+	termWidth, _, _ := term.GetSize(os.Stdout.Fd())
+	termWidth -= 5
+	firstWidth := termWidth * 15 / 100
+	columnWidth := (termWidth - firstWidth) / (len(table_data[0]) - 1)
+
 	t := table.New().
 		Border(lipgloss.RoundedBorder()).
 		BorderStyle(BorderStyle).
@@ -70,7 +76,10 @@ func printTable(table_data [][]string) {
 			}
 
 			if col == 0 {
-				style = style.Bold(true).Foreground(lipgloss.Color("#FACD81"))
+				style = style.Bold(true).Foreground(lipgloss.Color("#FACD81")).
+					Width(firstWidth)
+			} else {
+				style = style.Width(columnWidth)
 			}
 
 			if row == len(table_data)-2 {
