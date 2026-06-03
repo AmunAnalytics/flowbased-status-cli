@@ -5,13 +5,16 @@ LDFLAGS := -s -w -X main/buildinfo.Version=$(VERSION) \
 update:
 	@go mod tidy
 
+download:
+	@go mod download
+
 build: update
 	@go build -o bin/fb-status-cli main.go
 
 run: build
 	@bin/fb-status-cli
 
-release: update
+release: download
 	@mkdir -p releases/$(VERSION)
 	GOOS=darwin GOARCH=arm64 go build -ldflags "$(LDFLAGS)" -o releases/$(VERSION)/fb-status-mac-silicon
 	GOOS=darwin GOARCH=amd64 go build -ldflags "$(LDFLAGS)" -o releases/$(VERSION)/fb-status-mac-intel

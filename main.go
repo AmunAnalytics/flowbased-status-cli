@@ -109,9 +109,9 @@ func main() {
 		log.Fatal(err)
 	}
 
-	lipgloss.Println(HeaderStyle.Render("Core Market Coupling Status\n" +
-		fmt.Sprintf("For business day %s \n", business_day) +
-		"An Amun Analytics product\n"))
+	lipgloss.Println(HeaderStyle.Render(">> Core Market Coupling Status\n" +
+		fmt.Sprintf(">> For business day %s \n", business_day) +
+		">> An Amun Analytics product\n"))
 
 	lipgloss.Println(HeaderStyle.Render("> Flowbased Capacity Calculation"))
 	printTable(tables.FBCC)
