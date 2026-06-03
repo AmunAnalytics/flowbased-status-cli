@@ -5,6 +5,7 @@ import (
 	"log"
 	"main/buildinfo"
 	"main/statuspage"
+	"main/telemetry"
 	"os"
 	"strings"
 	"time"
@@ -87,11 +88,11 @@ func printTable(table_data [][]string) {
 				style = style.Width(columnWidth)
 				if len(table_data[row+1][col]) >= 3 {
 					cell_data := table_data[row+1][col]
-					if strings.HasPrefix(cell_data, "[✖]") {
+					if strings.Contains(cell_data, "[✖]") {
 						style = style.Foreground(lipgloss.Color(Red))
-					} else if strings.HasPrefix(cell_data, "[!]") {
+					} else if strings.Contains(cell_data, "[!]") {
 						style = style.Foreground(lipgloss.Color(Yellow))
-					} else if strings.HasPrefix(cell_data, "[✔]") {
+					} else if strings.Contains(cell_data, "[✔]") {
 						style = style.Foreground(lipgloss.Color(Green))
 					}
 				}
@@ -128,6 +129,9 @@ func main() {
 			log.Fatal(err)
 		}
 	}
+
+	telemetry.Register("fbstatuscli", buildinfo.Version)
+
 	tables, err := statuspage.GetData(business_day)
 	if err != nil {
 		log.Fatal(err)

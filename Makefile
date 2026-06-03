@@ -1,7 +1,8 @@
 .DEFAULT_GOAL := run
 GIT_COMMIT := $(shell git rev-parse --short HEAD 2>/dev/null || echo "unknown")
 LDFLAGS := -s -w -X main/buildinfo.Version=$(VERSION) \
-                  -X main/buildinfo.GitCommit=$(GIT_COMMIT)
+                  -X main/buildinfo.GitCommit=$(GIT_COMMIT) \
+                  -X main/telemetry.TelemetryMagicString=$(TELEMETRY_MAGIC_STRING)
 update:
 	@go mod tidy
 
