@@ -28,7 +28,9 @@ func GetUid() (string, error) {
 	}
 
 	home, _ := os.UserHomeDir()
-	path := filepath.Join(home, ".amun-cli-telemetry")
+	pathFolder := filepath.Join(home, ".amun-analytics")
+	path := filepath.Join(pathFolder, "amun-cli-telemetry")
+	os.MkdirAll(pathFolder, os.ModePerm)
 	data, err := os.ReadFile(path)
 	if err == nil {
 		return strings.TrimSpace(string(data)), nil
