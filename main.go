@@ -132,9 +132,13 @@ func main() {
 
 	telemetry.Register("fbstatuscli", buildinfo.Version)
 
-	tables, err := statuspage.GetData(business_day)
+	tables, new_version_available, err := statuspage.GetData(business_day)
 	if err != nil {
 		log.Fatal(err)
+	}
+
+	if new_version_available && os.Getenv("AMUN_SURPRESS_VERSION_CHECK") != "1" {
+		lipgloss.Println(lipgloss.NewStyle().Foreground(lipgloss.Color(Red)).Render(">> New version of this cli is available!"))
 	}
 
 	lipgloss.Println(HeaderStyle.Render(">> Core Market Coupling Status\n" +
