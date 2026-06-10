@@ -38,6 +38,10 @@ func GetData(business_day string) (StatusTables, bool, error) {
 
 	defer resp.Body.Close()
 
+	if resp.StatusCode != 200 {
+		return tables, false, fmt.Errorf("Server returned status code %d", resp.StatusCode)
+	}
+
 	bodyBytes, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return tables, false, err

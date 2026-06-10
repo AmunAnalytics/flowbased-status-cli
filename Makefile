@@ -17,7 +17,15 @@ run: build
 
 release: download
 	@mkdir -p releases/$(VERSION)
-	GOOS=darwin GOARCH=arm64 go build -ldflags "$(LDFLAGS)" -o releases/$(VERSION)/fb-status-mac-silicon
-	GOOS=darwin GOARCH=amd64 go build -ldflags "$(LDFLAGS)" -o releases/$(VERSION)/fb-status-mac-intel
-	GOOS=linux GOARCH=amd64 go build -ldflags "$(LDFLAGS)" -o releases/$(VERSION)/fb-status-linux
-	GOOS=windows GOARCH=amd64 go build -ldflags "$(LDFLAGS)" -o releases/$(VERSION)/fb-status-windows.exe
+	GOOS=darwin  GOARCH=arm64 go build -ldflags "$(LDFLAGS)" -o releases/$(VERSION)/fbstatus && \
+		zip -j releases/$(VERSION)/fbstatus-mac-silicon.zip releases/$(VERSION)/fbstatus && \
+		rm releases/$(VERSION)/fbstatus
+	GOOS=darwin  GOARCH=amd64 go build -ldflags "$(LDFLAGS)" -o releases/$(VERSION)/fbstatus && \
+		zip -j releases/$(VERSION)/fbstatus-mac-intel.zip releases/$(VERSION)/fbstatus && \
+		rm releases/$(VERSION)/fbstatus
+	GOOS=linux   GOARCH=amd64 go build -ldflags "$(LDFLAGS)" -o releases/$(VERSION)/fbstatus && \
+		zip -j releases/$(VERSION)/fbstatus-linux.zip releases/$(VERSION)/fbstatus && \
+		rm releases/$(VERSION)/fbstatus
+	GOOS=windows GOARCH=amd64 go build -ldflags "$(LDFLAGS)" -o releases/$(VERSION)/fbstatus.exe && \
+		zip -j releases/$(VERSION)/fbstatus-windows.zip releases/$(VERSION)/fbstatus.exe && \
+		rm releases/$(VERSION)/fbstatus.exe
