@@ -18,14 +18,14 @@ run: build
 release: download
 	@mkdir -p releases/$(VERSION)
 	GOOS=darwin  GOARCH=arm64 go build -ldflags "$(LDFLAGS)" -o releases/$(VERSION)/fbstatus && \
-		zip -j releases/$(VERSION)/fbstatus-mac-silicon.zip releases/$(VERSION)/fbstatus && \
+		zip -j releases/$(VERSION)/fbstatus-$(VERSION)-mac-silicon.zip releases/$(VERSION)/fbstatus && \
 		rm releases/$(VERSION)/fbstatus
 	GOOS=darwin  GOARCH=amd64 go build -ldflags "$(LDFLAGS)" -o releases/$(VERSION)/fbstatus && \
-		zip -j releases/$(VERSION)/fbstatus-mac-intel.zip releases/$(VERSION)/fbstatus && \
+		zip -j releases/$(VERSION)/fbstatus-$(VERSION)-mac-intel.zip releases/$(VERSION)/fbstatus && \
 		rm releases/$(VERSION)/fbstatus
 	GOOS=linux   GOARCH=amd64 go build -ldflags "$(LDFLAGS)" -o releases/$(VERSION)/fbstatus && \
-		zip -j releases/$(VERSION)/fbstatus-linux.zip releases/$(VERSION)/fbstatus && \
+		zip -j releases/$(VERSION)/fbstatus-$(VERSION)-linux.zip releases/$(VERSION)/fbstatus && \
 		rm releases/$(VERSION)/fbstatus
 	GOOS=windows GOARCH=amd64 go build -ldflags "$(LDFLAGS)" -o releases/$(VERSION)/fbstatus.exe && \
-		zip -j releases/$(VERSION)/fbstatus-windows.zip releases/$(VERSION)/fbstatus.exe && \
+		zip -j releases/$(VERSION)/fbstatus-$(VERSION)-windows.zip releases/$(VERSION)/fbstatus.exe && \
 		rm releases/$(VERSION)/fbstatus.exe
