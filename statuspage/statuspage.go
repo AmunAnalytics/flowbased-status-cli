@@ -27,6 +27,7 @@ func GetData(business_day string) (StatusTables, bool, error) {
 
 	client := &http.Client{}
 	req, err := http.NewRequest("GET", fmt.Sprintf("%s/%s/table", Host, business_day), nil)
+	req.Header.Set("User-Agent", fmt.Sprintf("fbstatus cli %s (%s)", buildinfo.Version, buildinfo.GitCommit))
 	if err != nil {
 		return tables, false, err
 	}
