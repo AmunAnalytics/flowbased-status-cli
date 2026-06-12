@@ -36,14 +36,15 @@ var (
 	Red    = "#b91c1c"
 )
 
-func askDate() (string, error) {
-	validate := func(s string) error {
-		_, err := time.Parse("2006-01-02", s)
-		if err != nil {
-			return fmt.Errorf("use YYYY-MM-DD")
-		}
-		return nil
+func validateDate(s string) error {
+	_, err := time.Parse("2006-01-02", s)
+	if err != nil {
+		return fmt.Errorf("use YYYY-MM-DD")
 	}
+	return nil
+}
+
+func askDate() (string, error) {
 	var business_day string
 	err := huh.NewForm(
 		huh.NewGroup(
@@ -51,7 +52,7 @@ func askDate() (string, error) {
 				Title("From date").
 				Description("Please specify the business day to query").
 				Placeholder("YYYY-MM-DD").
-				Validate(validate).
+				Validate(validateDate).
 				Value(&business_day),
 		),
 	).Run()
@@ -112,26 +113,7 @@ func printTable(table_data [][]string) {
 	lipgloss.Println(t)
 }
 
-func main() {
-	var business_day string
-	var err error
-
-	if len(os.Args) > 1 {
-		if os.Args[1] == "version" {
-			lipgloss.Println(HeaderStyle.Render(fmt.Sprintf("Version: \t\t %s", buildinfo.Version)))
-			lipgloss.Println(HeaderStyle.Render(fmt.Sprintf("Git Commit: \t %s", buildinfo.GitCommit)))
-			return
-		}
-		business_day = os.Args[1]
-	} else {
-		business_day, err = askDate()
-		if err != nil {
-			log.Fatal(err)
-		}
-	}
-
-	telemetry.Register("fbstatuscli", buildinfo.Version)
-
+func DefaultTable(business_day string) {
 	tables, new_version_available, err := statuspage.GetData(business_day)
 	if err != nil {
 		log.Fatal(err)
@@ -153,5 +135,73 @@ func main() {
 
 	lipgloss.Println(HeaderStyle.Render("> Intraday Market Coupling"))
 	printTable(tables.IDMC)
+}
+
+func ShortTable(business_day string) {
+	data, err := statuspage.GetDataShort(business_day)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	table_data := statuspage.GetTableDataShort(data)
+
+	t := table.New().
+		Border(lipgloss.RoundedBorder()).
+		BorderStyle(BorderStyle).
+		StyleFunc(func(row, col int) lipgloss.Style {
+			style := lipgloss.NewStyle()
+
+			if row == len(table_data)-2 {
+				style = style.BorderBottom(false)
+			}
+
+			style = style.Align(lipgloss.Left)
+
+			return style
+		}).
+		Headers(table_data[0]...).
+		Rows(table_data[1:]...)
+
+	lipgloss.Println(t)
+}
+
+func main() {
+	business_day := ""
+	var err error
+	short_table := false
+
+	if len(os.Args) > 1 {
+		if os.Args[1] == "version" {
+			lipgloss.Println(HeaderStyle.Render(fmt.Sprintf("Version: \t\t %s", buildinfo.Version)))
+			lipgloss.Println(HeaderStyle.Render(fmt.Sprintf("Git Commit: \t %s", buildinfo.GitCommit)))
+			return
+		} else if os.Args[1] == "short" {
+			short_table = true
+			if len(os.Args) > 2 {
+				business_day = os.Args[2]
+			}
+		} else {
+			business_day = os.Args[1]
+		}
+	}
+
+	if business_day == "" {
+		business_day, err = askDate()
+		if err != nil {
+			log.Fatal(err)
+		}
+	} else {
+		if validateDate(business_day) != nil {
+			log.Fatal("Please use format YYYY-MM-DD")
+		}
+	}
+
+	telemetry.Register("fbstatuscli", buildinfo.Version)
+
+	if !short_table {
+		DefaultTable(business_day)
+	} else {
+		ShortTable(business_day)
+	}
 
 }

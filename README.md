@@ -8,13 +8,14 @@ Please note that if you want to get the data in your own application you can use
 This tool is meant for a viewing purpose in your terminal.
 
 ## Usage
-There are two ways to use this tool. Either interactively or through direct command line arguments.  
-### Interactive
-Simply start the cli and you will get a prompt to enter a businessday. Enter it in the required format and press enter.
-### Through Arguments
-There are 2 commandline arguments available:  
+There are the following ways to use the tool:
 ```fbstatus version``` -> this prints the current version and git hash of the tool  
-```fbstatus <businessday>``` -> displays the status directly of the chosen businessday. The format should be ```YYYY-MM-DD```
+```fbstatus``` -> prompts the user for a business day and display the full status table  
+```fbstatus <businessday>``` -> displays the full status page directly of the specified businessday.  
+```fbstatus short``` -> prompts the user for a business day and shows a short table with trafic lights  
+```fbstatus short <businessday>``` -> displays the short table directly for the specified businessday  
+
+Any business day input should have the format ```YYYY-MM-DD```
 
 ## Screenshot
 ![Screenshot](img/screenshot.png)
