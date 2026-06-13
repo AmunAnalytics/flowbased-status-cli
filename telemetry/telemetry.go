@@ -5,6 +5,7 @@ import (
 	"crypto/rand"
 	"encoding/json"
 	"fmt"
+	"main/config"
 	"math/big"
 	"net/http"
 	"os"
@@ -14,10 +15,7 @@ import (
 )
 
 func IsDisabled() bool {
-	if val := os.Getenv("AMUN_DISABLE_TELEMETRY"); val != "" {
-		return val == "1"
-	}
-	return false
+	return config.GetConfig().General.DisableTelemetry
 }
 
 var TelemetryMagicString = "custom"
@@ -27,8 +25,7 @@ func GetUid() (string, error) {
 		return "", fmt.Errorf("Telemetry is disabled")
 	}
 
-	home, _ := os.UserHomeDir()
-	pathFolder := filepath.Join(home, ".amun-analytics")
+	pathFolder := config.GetConfigFolder()
 	path := filepath.Join(pathFolder, "amun-cli-telemetry")
 	os.MkdirAll(pathFolder, os.ModePerm)
 	data, err := os.ReadFile(path)

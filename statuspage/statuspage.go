@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"io"
 	"main/buildinfo"
+	"main/config"
 	"net/http"
-	"os"
 	"strings"
 )
 
@@ -45,7 +45,7 @@ type StatusJson struct {
 }
 
 func getHost() string {
-	if Debug := os.Getenv("AMUN_DEBUG"); Debug == "1" {
+	if config.GetConfig().FBStatus.Debug {
 		return "http://localhost:5000"
 	} else {
 		return "https://status.coreflowbased.eu"

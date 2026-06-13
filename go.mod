@@ -6,6 +6,7 @@ require (
 	charm.land/huh/v2 v2.0.3
 	charm.land/lipgloss/v2 v2.0.3
 	github.com/charmbracelet/x/term v0.2.2
+	github.com/pelletier/go-toml/v2 v2.3.1
 )
 
 require (

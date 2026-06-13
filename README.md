@@ -22,4 +22,17 @@ Any business day input should have the format ```YYYY-MM-DD```
 
 ## Telemetry
 This tool gathers some telemetry data and sends it to my server, namely your OS architecture and how often you use the tool. 
-If you whish to disable this set the environment variable ```AMUN_DISABLE_TELEMETRY="1"```
+If you whish to disable this set the environment variable ```AMUN_DISABLE_TELEMETRY="1"``` or see the config section below
+
+## Config
+This tool has some configuration options. You can either set the appropriate environment variables to "1" or write in ```~/.amun-analytics/config.toml```.    
+See below an example config with the matching environment variables:
+```toml
+[General]
+disable_telemetry = false # AMUN_DISABLE_TELEMETRY
+
+[fbstatus]
+surpress_version_check = false # AMUN_SURPRESS_VERSION_CHECK
+```
+
+You can run ```fbstatus config``` to see all loaded configuration options

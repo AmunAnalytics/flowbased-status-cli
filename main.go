@@ -4,9 +4,11 @@ import (
 	"fmt"
 	"log"
 	"main/buildinfo"
+	"main/config"
 	"main/statuspage"
 	"main/telemetry"
 	"os"
+	"strconv"
 	"strings"
 	"time"
 
@@ -113,13 +115,34 @@ func printTable(table_data [][]string) {
 	lipgloss.Println(t)
 }
 
+func printConfig(c config.Config) {
+	t := table.New().
+		Border(lipgloss.NormalBorder()).
+		BorderStyle(lipgloss.NewStyle().Foreground(lipgloss.Color("238"))).
+		StyleFunc(func(row, col int) lipgloss.Style {
+			if row == table.HeaderRow {
+				return HeaderStyle
+			} else {
+				return lipgloss.NewStyle().
+					Padding(0, 1).
+					Width(25).Foreground(lipgloss.White)
+			}
+		}).
+		Headers("Setting", "Value").
+		Row("disable_telemetry", strconv.FormatBool(c.General.DisableTelemetry)).
+		Row("debug_backend", strconv.FormatBool(c.FBStatus.Debug)).
+		Row("surpress_version_check", strconv.FormatBool(c.FBStatus.SuppressVersionCheck))
+
+	lipgloss.Println(t)
+}
+
 func DefaultTable(business_day string) {
 	tables, new_version_available, err := statuspage.GetData(business_day)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	if new_version_available && os.Getenv("AMUN_SURPRESS_VERSION_CHECK") != "1" {
+	if new_version_available && !config.GetConfig().FBStatus.SuppressVersionCheck {
 		lipgloss.Println(lipgloss.NewStyle().Foreground(lipgloss.Color(Red)).Render(">> New version of this cli is available!"))
 	}
 
@@ -174,6 +197,10 @@ func main() {
 		if os.Args[1] == "version" {
 			lipgloss.Println(HeaderStyle.Render(fmt.Sprintf("Version: \t\t %s", buildinfo.Version)))
 			lipgloss.Println(HeaderStyle.Render(fmt.Sprintf("Git Commit: \t %s", buildinfo.GitCommit)))
+			return
+		} else if os.Args[1] == "config" {
+			c := config.GetConfig()
+			printConfig(c)
 			return
 		} else if os.Args[1] == "short" {
 			short_table = true
