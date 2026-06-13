@@ -217,6 +217,10 @@ func main() {
 		if err != nil {
 			log.Fatal(err)
 		}
+	} else if business_day == "today" || business_day == "D" {
+		business_day = time.Now().Format("2006-01-02")
+	} else if business_day == "tomorrow" || business_day == "D+1" {
+		business_day = time.Now().AddDate(0, 0, 1).Format("2006-01-02")
 	} else {
 		if validateDate(business_day) != nil {
 			log.Fatal("Please use format YYYY-MM-DD")

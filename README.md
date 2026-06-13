@@ -15,7 +15,11 @@ There are the following ways to use the tool:
 ```fbstatus short``` -> prompts the user for a business day and shows a short table with trafic lights  
 ```fbstatus short <businessday>``` -> displays the short table directly for the specified businessday  
 
-Any business day input should have the format ```YYYY-MM-DD```
+Any business day input should have the format ```YYYY-MM-DD``` or use the following shorthands:
+* "today" or "D" for business day today
+* "tomorrow" or "D+1" for business day tomorrow 
+
+This is only possible if you supply it as a direct commandline argument
 
 ## Screenshot
 ![Screenshot](img/screenshot.png)
