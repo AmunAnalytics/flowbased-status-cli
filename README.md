@@ -24,6 +24,15 @@ This is only possible if you supply it as a direct commandline argument
 ## Screenshot
 ![Screenshot](img/screenshot.png)
 
+## Short Table Definition
+The short table uses the following abbreviations:
+* R -> Results
+* D -> Domain
+* ED -> Empty Domain
+* V -> Validation
+* A V -> ATC Validation
+* A -> ATC
+
 ## Telemetry
 This tool gathers some telemetry data and sends it to my server, namely your OS architecture and how often you use the tool. 
 If you whish to disable this set the environment variable ```AMUN_DISABLE_TELEMETRY="1"``` or see the config section below
