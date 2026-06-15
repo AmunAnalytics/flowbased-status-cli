@@ -29,3 +29,8 @@ release: download
 	GOOS=windows GOARCH=amd64 go build -ldflags "$(LDFLAGS)" -o releases/$(VERSION)/fbstatus.exe && \
 		zip -j releases/$(VERSION)/fbstatus-$(VERSION)-windows.zip releases/$(VERSION)/fbstatus.exe && \
 		rm releases/$(VERSION)/fbstatus.exe
+
+releasesha:
+	shasum -a 256 releases/$(VERSION)/fbstatus-$(VERSION)-mac-silicon.zip
+	shasum -a 256 releases/$(VERSION)/fbstatus-$(VERSION)-mac-intel.zip
+	shasum -a 256 releases/$(VERSION)/fbstatus-$(VERSION)-linux.zip

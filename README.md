@@ -7,6 +7,18 @@ You can display the data in a friendly way in your terminal for each businessday
 Please note that if you want to get the data in your own application you can use the API with curl by appending /json or /xml to the status page url. 
 This tool is meant for a viewing purpose in your terminal.
 
+## Installation
+Either download the latest version from the [releases page](https://github.com/AmunAnalytics/flowbased-status-cli/releases) 
+or use one of the following package managers:
+
+### Brew
+When install for the first time install the AmunAnalytics Tools tap first: ```brew tap amunanalytics/tools```  
+Then install the tool with ```brew install --cask fbstatus```
+
+### Arch Linux
+There is an [AUR package](https://aur.archlinux.org/packages/fbstatus-cli) available. 
+Either install through downloading the PKGBUILD manually or use an AUR wrapper for example ```yay -S fbstatus-cli```
+
 ## Usage
 There are the following ways to use the tool:
 ```fbstatus version``` -> this prints the current version and git hash of the tool  
