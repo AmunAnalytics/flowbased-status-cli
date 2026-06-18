@@ -27,6 +27,7 @@ type IdccStatus struct {
 	Iva                   bool `json:"iva_detected"`
 	IvaPresolved          bool `json:"iva_presolved_detected"`
 	IvaFallback           bool `json:"iva_fallback_detected"`
+	ReturnedBranches      bool `json:"returned_branches_detected"`
 }
 
 type StatusJson struct {
@@ -37,6 +38,7 @@ type StatusJson struct {
 			FbParametersKnown bool `json:"fb_parameters_known"`
 			IvaFallback       bool `json:"iva_fallback_detected"`
 			IvaPresolved      bool `json:"iva_presolved_detected"`
+			ReturnedBranches  bool `json:"returned_branches_detected"`
 		} `json:"DACC"`
 		IDCCb IdccStatus `json:"IDCC(b)"`
 		IDCCc IdccStatus `json:"IDCC(c)"`
@@ -173,6 +175,13 @@ func GetTableDataShort(data *StatusJson) [][]string {
 			light(fbstatus.IDCCb.FbParametersKnown, fbstatus.IDCCb.Iva, fbstatus.IDCCb.IvaFallback),
 			light(fbstatus.IDCCc.FbParametersKnown, fbstatus.IDCCc.Iva, fbstatus.IDCCc.IvaFallback),
 			light(fbstatus.IDCCd.FbParametersKnown, fbstatus.IDCCd.Iva, fbstatus.IDCCd.IvaFallback),
+		},
+		{
+			"R B",
+			light(fbstatus.DACC.FbParametersKnown, fbstatus.DACC.ReturnedBranches, false),
+			light(fbstatus.IDCCb.FbParametersKnown, fbstatus.IDCCb.ReturnedBranches, false),
+			light(fbstatus.IDCCc.FbParametersKnown, fbstatus.IDCCc.ReturnedBranches, false),
+			light(fbstatus.IDCCd.FbParametersKnown, fbstatus.IDCCd.ReturnedBranches, false),
 		},
 		{
 			"A V",

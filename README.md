@@ -42,6 +42,7 @@ The short table uses the following abbreviations:
 * D -> Domain
 * ED -> Empty Domain
 * V -> Validation
+* R B -> Returned Branches
 * A V -> ATC Validation
 * A -> ATC
 
