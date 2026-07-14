@@ -1,5 +1,15 @@
 package statuspage
 
+import (
+	"encoding/json"
+	"fmt"
+	"log"
+	"net/http"
+
+	"charm.land/lipgloss/v2"
+	"charm.land/lipgloss/v2/table"
+)
+
 type IdccStatus struct {
 	FbParametersKnown     bool `json:"fb_parameters_known"`
 	AtcPublished          bool `json:"atc_published"`
@@ -27,6 +37,29 @@ type StatusJson struct {
 		IDCCc IdccStatus `json:"IDCC(c)"`
 		IDCCd IdccStatus `json:"IDCC(d)"`
 	} `json:"flowbased"`
+}
+
+func GetDataShort(business_day string) (*StatusJson, error) {
+	Host := getHost()
+	client := &http.Client{}
+	req, err := http.NewRequest("GET", fmt.Sprintf("%s/%s/json", Host, business_day), nil)
+	setUserAgent(req)
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Add("accept", "application/json")
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	if resp.StatusCode != 200 {
+		return nil, fmt.Errorf("Server returned status code %d", resp.StatusCode)
+	}
+
+	status := &StatusJson{}
+	json.NewDecoder(resp.Body).Decode(status)
+	return status, nil
 }
 
 func GetTableDataShort(data *StatusJson) [][]string {
@@ -97,4 +130,32 @@ func GetTableDataShort(data *StatusJson) [][]string {
 		},
 	}
 	return table
+}
+
+func PrintShortTable(business_day string) {
+	data, err := GetDataShort(business_day)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	table_data := GetTableDataShort(data)
+
+	t := table.New().
+		Border(lipgloss.RoundedBorder()).
+		BorderStyle(lipgloss.NewStyle().Foreground(lipgloss.White)).
+		StyleFunc(func(row, col int) lipgloss.Style {
+			style := lipgloss.NewStyle()
+
+			if row == len(table_data)-2 {
+				style = style.BorderBottom(false)
+			}
+
+			style = style.Align(lipgloss.Left)
+
+			return style
+		}).
+		Headers(table_data[0]...).
+		Rows(table_data[1:]...)
+
+	lipgloss.Println(t)
 }

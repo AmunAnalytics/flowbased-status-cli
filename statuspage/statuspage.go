@@ -2,13 +2,17 @@ package statuspage
 
 import (
 	"encoding/csv"
-	"encoding/json"
 	"fmt"
 	"io"
 	"main/buildinfo"
 	"main/config"
 	"net/http"
+	"os"
 	"strings"
+
+	"charm.land/lipgloss/v2"
+	"charm.land/lipgloss/v2/table"
+	"github.com/charmbracelet/x/term"
 )
 
 type StatusTables struct {
@@ -79,25 +83,55 @@ func GetData(business_day string) (StatusTables, bool, error) {
 
 }
 
-func GetDataShort(business_day string) (*StatusJson, error) {
-	Host := getHost()
-	client := &http.Client{}
-	req, err := http.NewRequest("GET", fmt.Sprintf("%s/%s/json", Host, business_day), nil)
-	setUserAgent(req)
-	if err != nil {
-		return nil, err
-	}
-	req.Header.Add("accept", "application/json")
-	resp, err := client.Do(req)
-	if err != nil {
-		return nil, err
+func PrintTable(table_data [][]string) {
+	termWidth, _, err := term.GetSize(os.Stdout.Fd())
+	if err != nil || termWidth == 0 {
+		termWidth = 125
 	}
 
-	if resp.StatusCode != 200 {
-		return nil, fmt.Errorf("Server returned status code %d", resp.StatusCode)
-	}
+	termWidth -= 5
+	firstWidth := termWidth * 15 / 100
+	columnWidth := (termWidth - firstWidth) / (len(table_data[0]) - 1)
 
-	status := &StatusJson{}
-	json.NewDecoder(resp.Body).Decode(status)
-	return status, nil
+	t := table.New().
+		Border(lipgloss.RoundedBorder()).
+		BorderStyle(config.BorderStyle).
+		StyleFunc(func(row, col int) lipgloss.Style {
+			var style lipgloss.Style
+
+			if row == table.HeaderRow {
+				style = config.HeaderStyle
+			} else {
+				style = config.RowStyle
+			}
+
+			if col == 0 {
+				style = style.Bold(true).Foreground(lipgloss.Color("#FACD81")).
+					Width(firstWidth)
+			} else {
+				style = style.Width(columnWidth)
+				if len(table_data[row+1][col]) >= 3 {
+					cell_data := table_data[row+1][col]
+					if strings.Contains(cell_data, "[✖]") {
+						style = style.Foreground(lipgloss.Color(config.Red))
+					} else if strings.Contains(cell_data, "[!]") {
+						style = style.Foreground(lipgloss.Color(config.Yellow))
+					} else if strings.Contains(cell_data, "[✔]") {
+						style = style.Foreground(lipgloss.Color(config.Green))
+					}
+				}
+			}
+
+			if row == len(table_data)-2 {
+				style = style.BorderBottom(false)
+			}
+
+			style = style.Align(lipgloss.Left)
+
+			return style
+		}).
+		Headers(table_data[0]...).
+		Rows(table_data[1:]...)
+
+	lipgloss.Println(t)
 }
