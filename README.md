@@ -25,9 +25,12 @@ There are the following ways to use the tool:
 ```fbstatus``` -> prompts the user for a business day and display the full status table  
 ```fbstatus <businessday>``` -> displays the full status page directly of the specified businessday.  
 ```fbstatus short``` -> prompts the user for a business day and shows a short table with trafic lights  
-```fbstatus short <businessday>``` -> displays the short table directly for the specified businessday  
+```fbstatus short <businessday>``` -> displays the short table directly for the specified businessday   
+```fbstatus iva``` -> prompts the user for a business day and shows IVAs per hour and TSO   
+```fbstatus iva <businessday>``` -> displays IVAs per hour and TSO for the specified businessday   
 
 Any business day input should have the format ```YYYY-MM-DD``` or use the following shorthands:
+* "yesterday" or "D-1" for business day yesterday
 * "today" or "D" for business day today
 * "tomorrow" or "D+1" for business day tomorrow 
 
