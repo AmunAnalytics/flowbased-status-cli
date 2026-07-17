@@ -136,6 +136,8 @@ func main() {
 		business_day = time.Now().Format("2006-01-02")
 	} else if business_day == "tomorrow" || business_day == "D+1" {
 		business_day = time.Now().AddDate(0, 0, 1).Format("2006-01-02")
+	} else if business_day == "yesterday" || business_day == "D+1" {
+		business_day = time.Now().AddDate(0, 0, -1).Format("2006-01-02")
 	} else {
 		if validateDate(business_day) != nil {
 			log.Fatal("Please use format YYYY-MM-DD")
@@ -153,7 +155,7 @@ func main() {
 		PrintHeader(business_day, "Core FBMC Short Summary")
 		statuspage.PrintShortTable(table_data)
 	} else if active_mode == iva_detail {
-		PrintHeader(business_day, "Core FBMC IVA Detail")
+		PrintHeader(business_day, "Core FBMC IVA Detail DACC")
 		statuspage.PrintTableIvaDetail(business_day)
 	} else {
 		DefaultTable(business_day)
