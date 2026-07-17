@@ -7,6 +7,8 @@ import (
 	toml "github.com/pelletier/go-toml/v2"
 )
 
+var NewVersionAvailable = false
+
 type Config struct {
 	General  GeneralConfig  `toml:"General"`
 	FBStatus FBStatusConfig `toml:"fbstatus"`

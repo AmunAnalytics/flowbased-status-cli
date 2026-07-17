@@ -61,34 +61,47 @@ func printConfig(c config.Config) {
 	lipgloss.Println(t)
 }
 
+func PrintHeader(business_day string, subject string) {
+	if config.NewVersionAvailable && !config.GetConfig().FBStatus.SuppressVersionCheck {
+		lipgloss.Println(lipgloss.NewStyle().Foreground(lipgloss.Color(config.Red)).Render(">> New version of this cli is available!"))
+	}
+
+	lipgloss.Println(config.HeaderStyle.Render(
+		fmt.Sprintf(">> %s \n>> For business day %s \n", subject, business_day) +
+			">> An Amun Analytics product\n"))
+}
+
 func DefaultTable(business_day string) {
-	tables, new_version_available, err := statuspage.GetData(business_day)
+	tables, err := statuspage.GetData(business_day)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	if new_version_available && !config.GetConfig().FBStatus.SuppressVersionCheck {
-		lipgloss.Println(lipgloss.NewStyle().Foreground(lipgloss.Color(config.Red)).Render(">> New version of this cli is available!"))
-	}
-
-	lipgloss.Println(config.HeaderStyle.Render(">> Core Market Coupling Status\n" +
-		fmt.Sprintf(">> For business day %s \n", business_day) +
-		">> An Amun Analytics product\n"))
+	PrintHeader(business_day, "Core Market Coupling Status")
 
 	lipgloss.Println(config.HeaderStyle.Render("> Flowbased Capacity Calculation"))
-	statuspage.PrintTable(tables.FBCC)
+	statuspage.PrintTable(tables.FBCC, 0, statuspage.BasePrintMode)
 
 	lipgloss.Println(config.HeaderStyle.Render("> Day-Ahead Market Coupling"))
-	statuspage.PrintTable(tables.DAMC)
+	statuspage.PrintTable(tables.DAMC, 0, statuspage.BasePrintMode)
 
 	lipgloss.Println(config.HeaderStyle.Render("> Intraday Market Coupling"))
-	statuspage.PrintTable(tables.IDMC)
+	statuspage.PrintTable(tables.IDMC, 0, statuspage.BasePrintMode)
 }
+
+type view_mode int
+
+const (
+	base view_mode = iota
+	short_table
+	iva_detail
+)
 
 func main() {
 	business_day := ""
 	var err error
-	short_table := false
+
+	active_mode := base
 
 	if len(os.Args) > 1 {
 		if os.Args[1] == "version" {
@@ -100,7 +113,12 @@ func main() {
 			printConfig(c)
 			return
 		} else if os.Args[1] == "short" {
-			short_table = true
+			active_mode = short_table
+			if len(os.Args) > 2 {
+				business_day = os.Args[2]
+			}
+		} else if os.Args[1] == "iva" {
+			active_mode = iva_detail
 			if len(os.Args) > 2 {
 				business_day = os.Args[2]
 			}
@@ -126,10 +144,19 @@ func main() {
 
 	telemetry.Register("fbstatuscli", buildinfo.Version)
 
-	if !short_table {
-		DefaultTable(business_day)
+	if active_mode == short_table {
+		data, err := statuspage.GetDataShort(business_day)
+		if err != nil {
+			log.Fatal(err)
+		}
+		table_data := statuspage.GetTableDataShort(data)
+		PrintHeader(business_day, "Core FBMC Short Summary")
+		statuspage.PrintShortTable(table_data)
+	} else if active_mode == iva_detail {
+		PrintHeader(business_day, "Core FBMC IVA Detail")
+		statuspage.PrintTableIvaDetail(business_day)
 	} else {
-		statuspage.PrintShortTable(business_day)
+		DefaultTable(business_day)
 	}
 
 }
