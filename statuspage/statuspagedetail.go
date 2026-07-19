@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"sort"
+	"strings"
 )
 
 type StatusIvaDetailJson map[string]map[string]TSOMetrics
@@ -22,8 +23,36 @@ var TSOs = []string{
 	"TRANSELECTRICA", "TRANSNETBW",
 }
 
-func GetDataIvaDetail(business_day string, timeframe string) (*StatusIvaDetailJson, error) {
-	resp, err := doApiCall(fmt.Sprintf("%s/details/%s/iva/json", business_day, timeframe))
+type Timeframe string
+
+const (
+	DACC  Timeframe = "dacc"
+	IDCCb Timeframe = "idccb"
+	IDCCc Timeframe = "idccc"
+	IDCCd Timeframe = "idccd"
+	//IDCCe Timeframe = "IDCCe"
+)
+
+func (t Timeframe) Print() string {
+	if t == DACC {
+		return "DACC"
+	} else {
+		ts := string(t)
+		return strings.ToUpper(ts[:4]) + ts[4:5]
+	}
+}
+
+func ParseTimeframe(s string) (Timeframe, error) {
+	switch Timeframe(s) {
+	case DACC, IDCCb, IDCCc, IDCCd: //, IDCCe:
+		return Timeframe(s), nil
+	default:
+		return "", fmt.Errorf("Invalid timeframe: %q", s)
+	}
+}
+
+func GetDataIvaDetail(business_day string, tf Timeframe) (*StatusIvaDetailJson, error) {
+	resp, err := doApiCall(fmt.Sprintf("%s/details/%s/iva/json", business_day, tf))
 	if err != nil {
 		return nil, err
 	}
@@ -65,8 +94,8 @@ func GetTableIvaDetail(data *StatusIvaDetailJson) [][]string {
 	return table
 }
 
-func PrintTableIvaDetail(business_day string) {
-	data, err := GetDataIvaDetail(business_day, "DACC")
+func PrintTableIvaDetail(business_day string, tf Timeframe) {
+	data, err := GetDataIvaDetail(business_day, tf)
 	if err != nil {
 		log.Fatal(err)
 	}

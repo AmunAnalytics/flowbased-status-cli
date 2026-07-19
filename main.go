@@ -9,6 +9,7 @@ import (
 	"main/telemetry"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	"charm.land/huh/v2"
@@ -102,6 +103,7 @@ func main() {
 	var err error
 
 	active_mode := base
+	tf := statuspage.DACC
 
 	if len(os.Args) > 1 {
 		if os.Args[1] == "version" {
@@ -120,7 +122,22 @@ func main() {
 		} else if os.Args[1] == "iva" {
 			active_mode = iva_detail
 			if len(os.Args) > 2 {
-				business_day = os.Args[2]
+				tf, err = statuspage.ParseTimeframe(strings.ToLower(os.Args[2]))
+				if len(os.Args) > 3 {
+					if err != nil {
+						log.Fatal(err)
+					}
+					business_day = os.Args[3]
+				} else if len(os.Args) == 3 {
+					if strings.Count(os.Args[2], "-") == 2 {
+						business_day = os.Args[2]
+						tf = statuspage.DACC
+					} else {
+						if err != nil {
+							log.Fatal(err)
+						}
+					}
+				}
 			}
 		} else {
 			business_day = os.Args[1]
@@ -155,8 +172,8 @@ func main() {
 		PrintHeader(business_day, "Core FBMC Short Summary")
 		statuspage.PrintShortTable(table_data)
 	} else if active_mode == iva_detail {
-		PrintHeader(business_day, "Core FBMC IVA Detail DACC")
-		statuspage.PrintTableIvaDetail(business_day)
+		PrintHeader(business_day, fmt.Sprintf("Core FBMC IVA Detail %s", tf.Print()))
+		statuspage.PrintTableIvaDetail(business_day, tf)
 	} else {
 		DefaultTable(business_day)
 	}

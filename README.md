@@ -27,8 +27,8 @@ There are the following ways to use the tool:
 ```fbstatus short``` -> prompts the user for a business day and shows a short table with trafic lights  
 ```fbstatus short <businessday>``` -> displays the short table directly for the specified businessday   
 ```fbstatus iva``` -> prompts the user for a business day and shows IVAs per hour and TSO   
-```fbstatus iva <businessday>``` -> displays IVAs per hour and TSO for the specified businessday   
-
+```fbstatus iva <businessday>``` -> displays IVAs per hour and TSO for the specified businessday, defaults to DACC   
+```fbstatus iva <timeframe> <businessday>``` -> same as previous line but now you can specify the timeframe, this can be ```DACC``` ```IDCCb``` ```IDCCc``` ```IDCCd```   
 Any business day input should have the format ```YYYY-MM-DD``` or use the following shorthands:
 * "yesterday" or "D-1" for business day yesterday
 * "today" or "D" for business day today
